@@ -3,6 +3,8 @@
 using Amazon.S3.Transfer;
 using Amazon.S3;
 using Microsoft.Extensions.DependencyInjection;
+using Jaype.Common.AWS;
+using S3BlobUploader;
 
 Console.WriteLine("Where should I look for files? Enter the full location of the directive");
 
@@ -14,6 +16,12 @@ Console.WriteLine("What is the name of the S3 bucket where you want the images u
 var bucket = Console.ReadLine();
 if(bucket == null) 
     return;
+
+Console.WriteLine("Enter the subfolder if applicable, no special characters");
+var subfolder = Console.ReadLine();
+if (!string.IsNullOrEmpty(subfolder))
+    subfolder = $"{subfolder}/";
+
 
 Console.WriteLine("file types? delimited by comma");
 var fileTypesStr = Console.ReadLine();
@@ -40,17 +48,20 @@ if (Directory.Exists(directory))
         files.AddRange(filesForFileType);
     }
 
-    var s3Client = serviceProvider.GetRequiredService<IAmazonS3>();
-    var awsBlobStore = new AwsBlobStorage(s3Client, bucket, isPublicReadAccess);
+    var store = serviceProvider.GetRequiredService<ICloudStorageUtility>();
+    var artOptimizer = serviceProvider.GetRequiredService<IArtOptimizer>();
     foreach (var file in files)
     {
         var fileStream = File.OpenRead(file);
         var fileName = Path.GetFileName(file);
-        var memStream = new MemoryStream();
-        fileStream.CopyTo(memStream);
+        using var contentStream = new MemoryStream();
+        fileStream.CopyTo(contentStream);
 
-        var fileKey = ProvideBlobImageKey(fileName);
-        await awsBlobStore.Add(fileKey, memStream);
+        using var optimizedContent = new MemoryStream();
+        await artOptimizer.OptimizeImage(contentStream, optimizedContent, quality: 75);
+
+        var fileKey = $"{subfolder}{fileName}";//ProvideBlobImageKey(fileName);
+        await store.Upload(bucket, fileKey, optimizedContent);
 
         fileStream.Dispose();
     }
@@ -60,6 +71,8 @@ void ConfigureServices(IServiceCollection services)
 {
     services.AddScoped<IAmazonS3, AmazonS3Client>();
     services.AddScoped<ITransferUtility, TransferUtility>();
+    services.AddScoped<ICloudStorageUtility, AwsS3Storage>();
+    services.AddScoped<IArtOptimizer, SixLaborImageSharpOptimizer>();
 }
 
 string ProvideBlobImageKey(string fileName) => $"{DateTime.UtcNow:yyyy\\/\\MM\\/dd}_{fileName}";

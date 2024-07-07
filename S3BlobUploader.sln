@@ -5,6 +5,8 @@ VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "S3BlobUploader", "S3BlobUploader.csproj", "{F4DCAC12-4F0E-498E-8D7B-38A85945A2E3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jaype.Common", "..\Common\Jaype.Common\Jaype.Common.csproj", "{C58732A0-5E93-45CD-819A-E72A64160BBF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{F4DCAC12-4F0E-498E-8D7B-38A85945A2E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4DCAC12-4F0E-498E-8D7B-38A85945A2E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4DCAC12-4F0E-498E-8D7B-38A85945A2E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C58732A0-5E93-45CD-819A-E72A64160BBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C58732A0-5E93-45CD-819A-E72A64160BBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C58732A0-5E93-45CD-819A-E72A64160BBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C58732A0-5E93-45CD-819A-E72A64160BBF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
